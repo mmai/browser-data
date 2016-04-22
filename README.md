@@ -13,6 +13,8 @@ console.log(bdata.browserSupport("Firefox", "3", "border-radius")) // false
 console.log(bdata.browserSupport("Firefox", "3", "border-color")) // true
 ```
 
+## Database sources
+
 Support database was built from the wikipedia page https://en.wikipedia.org/w/index.php?title=Comparison_of_layout_engines_%28Cascading_Style_Sheets%29 (see `tools/wikipediaScraper.js`)
 
 Browsers / engines versions matches comes from these sources : 
