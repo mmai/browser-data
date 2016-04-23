@@ -1,7 +1,5 @@
-var fs = require('fs');
-
-var propertiesDb = JSON.parse(fs.readFileSync('engineSupportDb.json', 'utf8'));
-var browsersDb = JSON.parse(fs.readFileSync('browsersDb.json', 'utf8'));
+var propertiesDb = require('./engineSupportDb')
+var browsersDb = require('./browsersDb')
 
 var browsers = Object.keys(browsersDb)
 
