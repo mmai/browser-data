@@ -50,6 +50,16 @@ var browserSupport = function browserSupport (browser, version, property){
 }
 
 var engineSupport = function engineSupport(engine, version, property){
+  if (!propertiesDb.hasOwnProperty(property)) {
+    console.log(`property not in database: ${property}`)
+    return undefined
+  }
+  if (!propertiesDb[property].hasOwnProperty(engine)) {
+    console.log(`${engine} not in database for property ${property}`)
+    console.log(propertiesDb[property])
+    return undefined
+  }
+
   var support = propertiesDb[property][engine].toLowerCase()
   switch(support){
   case 'yes':

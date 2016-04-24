@@ -1,11 +1,13 @@
 var jsdom = require("jsdom");
 var fs = require('fs')
 
+var associatedProperties = require('./associatedProperties')
+
 var outputFile = './engineSupportDb.json'
  
 jsdom.env(
-  'https://en.wikipedia.org/w/index.php?title=Comparison_of_layout_engines_%28Cascading_Style_Sheets%29&printable=yes',
-  // './Comparison_of_layout_engines.html',
+  // 'https://en.wikipedia.org/w/index.php?title=Comparison_of_layout_engines_%28Cascading_Style_Sheets%29&printable=yes',
+  './tools/Comparison_of_layout_engines.html',
   ["http://code.jquery.com/jquery.js"],
   function (err, window) {
     var tableElem = window.$("#Properties").parent().next().get()[0]
@@ -39,15 +41,28 @@ function makeJsonFromTableElements(t){
         var propertyElem = td.firstChild
         if (propertyElem && propertyElem.tagName === "CODE") {
           var property = propertyElem.textContent
-          db[property] = {}
+
           Object.keys(engines).map(function(pos){
               var engine = engines[pos]
-              db[property][engine] = parseSupport(row[pos].textContent)
+              var support = parseSupport(row[pos].textContent)
+              addPropertiesSupport(db, engine, getAssociatedProperties(property), support)
             })
+
         }
       }
    })
   return db
+}
+
+function addPropertiesSupport(db, engine, properties, support){
+  properties.map(function(property){
+      if (!db.hasOwnProperty(property)) db[property] = {}
+      db[property][engine] = support
+    })
+}
+
+function getAssociatedProperties(property){
+  return associatedProperties[property] || [property] 
 }
 
 function parseSupport(txt){

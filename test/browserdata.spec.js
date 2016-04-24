@@ -27,5 +27,8 @@ describe( 'browserData', function() {
         it('should return true if a property is supported', function(){
             expect(bdata.browserSupport("Firefox", "3", "border-color")).to.equal(true)
           });
+        it('should return undefined if a property is not known', function(){
+            expect(bdata.browserSupport("Firefox", "3", "gloubiboulga")).to.equal(undefined)
+          });
       });
   });
