@@ -7,10 +7,11 @@ Check CSS properties support on major browsers
 ```javascript
 var bdata =  require('browser-data')
 
-console.log(bdata.getEngine("Firefox", "3")) // {engine: 'Gecko', version: '1.9.1'}
+var browser = {name: "Firefox", version: "3"}
+console.log(bdata.getEngine(browser)) // {name: 'Gecko', version: '1.9.1'}
 
-console.log(bdata.browserSupport("Firefox", "3", "border-radius")) // false
-console.log(bdata.browserSupport("Firefox", "3", "border-color")) // true
+console.log(bdata.browserSupport(browser, "border-radius")) // false
+console.log(bdata.browserSupport(browser, "border-color")) // true
 ```
 
 ## Database sources
