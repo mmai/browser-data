@@ -72,8 +72,4 @@ var engineSupport = function engineSupport (engine, property) {
   return undefined
 }
 
-module.exports = {
-  getEngine: getEngine,
-  browserSupport: browserSupport,
-  engineSupport: engineSupport,
-}
+module.exports = { getEngine, browserSupport, engineSupport, browsersDb}
