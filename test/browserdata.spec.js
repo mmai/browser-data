@@ -28,7 +28,10 @@ describe('browserData', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '3'}, 'border-color')).to.equal(true)
     })
     it('should return undefined if a property is not known', function () {
-      expect(bdata.browserSupport({browser: 'Firefox', version: '3'}, 'gloubiboulga')).to.equal(undefined)
+      expect(bdata.browserSupport({name: 'Firefox', version: '3'}, 'gloubiboulga')).to.equal(undefined)
+    })
+    it('should fallback to Trident 3 for MSHTML', function () {
+      expect(bdata.browserSupport({name: 'IE', version: '6'}, 'border-collapse')).to.equal(false)
     })
   })
 })

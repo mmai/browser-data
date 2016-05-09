@@ -55,9 +55,15 @@ var engineSupport = function engineSupport (engine, property) {
     return undefined
   }
   if (!propertiesDb[property].hasOwnProperty(engine.name)) {
-    console.log(`${engine.name} not in database for property ${property}`)
-    console.log(propertiesDb[property])
-    return undefined
+    // MSHTML fallback
+    if (engine.name === 'MSHTML' && propertiesDb[property].hasOwnProperty('Trident')) {
+      console.log('MSHTML fallbacks to Trident 3')
+      engine = {name: 'Trident', version: '3'}
+    } else {
+      console.log(`${engine.name} not in database for property ${property}`)
+      console.log(propertiesDb[property])
+      return undefined
+    }
   }
 
   var support = propertiesDb[property][engine.name].toLowerCase()
