@@ -1,0 +1,8 @@
+{
+  "Gecko": ["-moz-", "-webkit-"],
+  "WebKit": ["-webkit-", "-apple-", "-khtml-", "-epub-"],
+  "Presto": ["-o-", "-xv-", "-wap-",  "-webkit-"],
+  "Elektra": ["-o-"],
+  "Trident": ["-ms-"],
+  "MSHTML": ["-ms-"]
+}

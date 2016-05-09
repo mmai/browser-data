@@ -20,6 +20,7 @@ describe('browserData', function () {
       expect(engineData.version).to.equal('1.9.1')
     })
   })
+
   describe('browserSupport', function () {
     it('should return false if a property is not supported', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '3'}, 'border-radius')).to.equal(false)
@@ -32,6 +33,15 @@ describe('browserData', function () {
     })
     it('should fallback to Trident 3 for MSHTML', function () {
       expect(bdata.browserSupport({name: 'IE', version: '6'}, 'border-collapse')).to.equal(false)
+    })
+  })
+
+  describe('removePrefix', function () {
+    it('should translate prefixed properties', function () {
+      expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-webkit-animation')).to.equal(true)
+    })
+    it('should not translate prefixed properties of other engines', function () {
+      expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-ms-animation')).to.equal(undefined)
     })
   })
 })

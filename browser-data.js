@@ -1,5 +1,6 @@
 var propertiesDb = require('./engineSupportDb')
 var browsersDb = require('./browsersDb')
+var enginesPrefixes = require('./enginesPrefixes')
 
 var browsers = Object.keys(browsersDb)
 
@@ -50,14 +51,15 @@ var browserSupport = function browserSupport (browser, property) {
 }
 
 var engineSupport = function engineSupport (engine, property) {
+  const originalProperty = property
+  property = removePrefix(engine, property)
   if (!propertiesDb.hasOwnProperty(property)) {
-    console.log(`property not in database: ${property}`)
+    console.log(`property not in database: ${property} (${originalProperty})`)
     return undefined
   }
   if (!propertiesDb[property].hasOwnProperty(engine.name)) {
     // MSHTML fallback
     if (engine.name === 'MSHTML' && propertiesDb[property].hasOwnProperty('Trident')) {
-      console.log('MSHTML fallbacks to Trident 3')
       engine = {name: 'Trident', version: '3'}
     } else {
       console.log(`${engine.name} not in database for property ${property}`)
@@ -76,6 +78,13 @@ var engineSupport = function engineSupport (engine, property) {
       return support <= engine.version
   }
   return undefined
+}
+
+function removePrefix (engine, property) {
+  enginesPrefixes[engine.name].forEach(function (prefix) {
+    property = property.replace(new RegExp('^' + prefix), '')
+  })
+  return property
 }
 
 module.exports = { getEngine, browserSupport, engineSupport, browsersDb}
