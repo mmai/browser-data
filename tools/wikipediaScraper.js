@@ -1,13 +1,13 @@
 var jsdom = require('jsdom')
 var fs = require('fs')
 
-var associatedProperties = require('./associatedProperties')
+var associatedProperties = require('./wikipediaAssociatedProperties')
 
-var outputFile = './engineSupportDb.json'
+var outputFile = './db/wikipediaDb.json'
 
 jsdom.env(
-  // 'https://en.wikipedia.org/w/index.php?title=Comparison_of_layout_engines_%28Cascading_Style_Sheets%29&printable=yes',
-  './tools/Comparison_of_layout_engines.html',
+  'https://en.wikipedia.org/w/index.php?title=Comparison_of_layout_engines_%28Cascading_Style_Sheets%29&printable=yes',
+  // './work/Comparison_of_layout_engines.html',
   ['http://code.jquery.com/jquery.js'],
   function (err, window) {
     var db = {}

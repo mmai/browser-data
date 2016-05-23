@@ -1,9 +1,16 @@
-var propertiesDb = require('./engineSupportDb')
-var browsersDb = require('./browsersDb')
-var enginesPrefixes = require('./enginesPrefixes')
+var wikipediaDb = require('./db/wikipediaDb')
+var browsersDb = require('./db/browsersDb')
+var mdnDb = require('./db/mdnDb')
+var enginesPrefixes = require('./db/enginesPrefixes')
+var versionsHelpers = require('./versionsHelpers')
+var findLastVersion = versionsHelpers.findLastVersion
+var compareVersions = versionsHelpers.compareVersions
 
 var browsers = Object.keys(browsersDb)
 
+/* API */
+
+// Uses engineSupportDb
 var getEngine = function getEngine (browser) {
   if (browsers.indexOf(browser.name) === -1) {
     return undefined
@@ -13,62 +20,74 @@ var getEngine = function getEngine (browser) {
   return browserData[browserVersion]
 }
 
-function findLastVersion (versions, version) {
-  if (versions.indexOf(version) > -1) {
-    return version
-  } else {
-    // Return the previous version
-    versions.push(version)
-    versions.sort(compareVersions)
-    var idx = versions.indexOf(version)
-    if (idx === 0) {
-      return undefined
-    }
-    return versions[idx - 1]
-  }
-  return undefined
-}
-
-function compareVersions (a, b) {
-  if (a === b) { return 0 }
-
-  var a_components = a.split('.').map(function (s) {return parseInt(s, 10)})
-  var b_components = b.split('.').map(function (s) {return parseInt(s, 10)})
-
-  var len = Math.min(a_components.length, b_components.length)
-  for (var i = 0; i < len; i++) {
-    if (a_components[i] !== b_components[i]) {
-      return a_components[i] - b_components[i]
-    }
-  }
-
-  return (a_components.length - b_components.length)
-}
-
-var browserSupport = function browserSupport (browser, property) {
+// Uses engineSupportDb
+var browserSupport_ = function browserSupport (browser, property) {
   var engine = getEngine(browser)
   return engineSupport(engine, property)
 }
 
+// Uses mdnDbTranslated
+var browserSupport = function browserSupport (browser, property) {
+  var splited = splitPrefix(property)
+  console.log(splited)
+  var prefix = splited.prefix
+  var property = splited.property
+
+  var browsers = {
+    'Firefox': 'f',
+    'Android': 'a',
+    'Safari': 's',
+    'Chrome': 'c',
+    'Opera': 'o',
+    'IE': 'ie',
+    'IEMobile': 'iem',
+  }
+  var browserId = browsers[browser.name]
+  if (!mdnDb.hasOwnProperty(property)) {
+    console.log(`property not in database: ${property}`)
+  } else {
+    var supports = mdnDb[property].c.bs[browserId]
+    var defaultSupports = supports.filter((s) => s.p === prefix)
+    if (defaultSupports.length === 0) {
+      return undefined
+    }
+    var version = defaultSupports[0].v
+    switch (version) {
+      case 'yes':
+        return true
+      case 'no':
+        return false
+      case '-':
+      case '?':
+        return undefined
+      // case undefined:
+      //   console.log(mdnDb[property])
+      default:
+        return compareVersions(version, browser.version) <= 0
+    }
+  }
+  return undefined
+}
+
+// Uses engineSupportDb
 var engineSupport = function engineSupport (engine, property) {
   const originalProperty = property
   property = removePrefix(engine, property)
-  if (!propertiesDb.hasOwnProperty(property)) {
+  if (!wikipediaDb.hasOwnProperty(property)) {
     console.log(`property not in database: ${property} (${originalProperty})`)
     return undefined
   }
-  if (!propertiesDb[property].hasOwnProperty(engine.name)) {
+  if (!wikipediaDb[property].hasOwnProperty(engine.name)) {
     // MSHTML fallback
-    if (engine.name === 'MSHTML' && propertiesDb[property].hasOwnProperty('Trident')) {
+    if (engine.name === 'MSHTML' && wikipediaDb[property].hasOwnProperty('Trident')) {
       engine = {name: 'Trident', version: '3'}
     } else {
       console.log(`${engine.name} not in database for property ${property}`)
-      console.log(propertiesDb[property])
+      console.log(wikipediaDb[property])
       return undefined
     }
   }
-
-  var support = propertiesDb[property][engine.name].toLowerCase()
+  var support = wikipediaDb[property][engine.name].toLowerCase()
   switch (support) {
     case 'yes':
       return true
@@ -80,11 +99,19 @@ var engineSupport = function engineSupport (engine, property) {
   return undefined
 }
 
-function removePrefix (engine, property) {
-  enginesPrefixes[engine.name].forEach(function (prefix) {
-    property = property.replace(new RegExp('^' + prefix), '')
+/* Helpers */
+
+function splitPrefix (property) {
+  var prefixes = ['ms', 'moz', 'webkit', 'apple', 'khtml', 'epub', 'o', 'xv', 'wap']
+  var prefix = ''
+  prefixes.forEach(function (curPrefix) {
+    pty = property.replace(new RegExp('^-?' + curPrefix + '-'), '')
+    if (pty !== property) {
+      property = pty
+      prefix = '-' + curPrefix
+    }
   })
-  return property
+  return {prefix, property}
 }
 
 module.exports = { getEngine, browserSupport, engineSupport, browsersDb}

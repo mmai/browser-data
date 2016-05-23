@@ -31,14 +31,14 @@ describe('browserData', function () {
     it('should return undefined if a property is not known', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '3'}, 'gloubiboulga')).to.equal(undefined)
     })
-    it('should fallback to Trident 3 for MSHTML', function () {
-      expect(bdata.browserSupport({name: 'IE', version: '6'}, 'border-collapse')).to.equal(false)
-    })
+  // it('should fallback to Trident 3 for MSHTML', function () {
+  //   expect(bdata.browserSupport({name: 'IE', version: '6'}, 'border-collapse')).to.equal(false)
+  // })
   })
 
   describe('removePrefix', function () {
     it('should translate prefixed properties', function () {
-      expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-webkit-animation')).to.equal(true)
+      expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-moz-animation')).to.equal(true)
     })
     it('should not translate prefixed properties of other engines', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-ms-animation')).to.equal(undefined)
