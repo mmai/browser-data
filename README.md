@@ -90,6 +90,17 @@ Browsers / engines versions matches comes from these sources :
 
 ## Todo
 
+### missing properties
+
+aquinum.fr : 
+
+* -webkit-tap-highlight-color
+* -webkit-font-smoothing
+* -webkit-user-select
+* -webkit-margin-top-collapse
+
+* consolidate mdn database 
+  * check same engine versions for a given property, -> majority ? wikipedia database ?
 * script to update new browser versions engines
 * check selectors support
 * check descriptors support

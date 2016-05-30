@@ -1,6 +1,6 @@
 {
   "name": "browser-data",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Check browser support for a given CSS property",
   "main": "browser-data.js",
   "scripts": {

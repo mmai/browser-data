@@ -1,3 +1,5 @@
+var _ = require('lodash')
+
 var wikipediaDb = require('./db/wikipediaDb')
 var browsersDb = require('./db/browsersDb')
 var mdnDb = require('./db/mdnDb')
@@ -20,16 +22,9 @@ var getEngine = function getEngine (browser) {
   return browserData[browserVersion]
 }
 
-// Uses engineSupportDb
-var browserSupport_ = function browserSupport (browser, property) {
-  var engine = getEngine(browser)
-  return engineSupport(engine, property)
-}
-
-// Uses mdnDbTranslated
+// Uses mdnDb
 var browserSupport = function browserSupport (browser, property) {
   var splited = splitPrefix(property)
-  console.log(splited)
   var prefix = splited.prefix
   var property = splited.property
 
@@ -44,7 +39,8 @@ var browserSupport = function browserSupport (browser, property) {
   }
   var browserId = browsers[browser.name]
   if (!mdnDb.hasOwnProperty(property)) {
-    console.log(`property not in database: ${property}`)
+    // Fallback to wikipedia database
+    return browserSupport_(browser, property)
   } else {
     var supports = mdnDb[property].c.bs[browserId]
     var defaultSupports = supports.filter((s) => s.p === prefix)
@@ -67,6 +63,12 @@ var browserSupport = function browserSupport (browser, property) {
     }
   }
   return undefined
+}
+
+// Uses engineSupportDb
+var browserSupport_ = function browserSupport (browser, property) {
+  var engine = getEngine(browser)
+  return engineSupport(engine, property)
 }
 
 // Uses engineSupportDb
@@ -102,16 +104,23 @@ var engineSupport = function engineSupport (engine, property) {
 /* Helpers */
 
 function splitPrefix (property) {
-  var prefixes = ['ms', 'moz', 'webkit', 'apple', 'khtml', 'epub', 'o', 'xv', 'wap']
+  var prefixes = _.uniq(_.flatten(_.values(enginesPrefixes))).map((p) => p.replace(/-/g, ''))
   var prefix = ''
   prefixes.forEach(function (curPrefix) {
-    pty = property.replace(new RegExp('^-?' + curPrefix + '-'), '')
+    var pty = property.replace(new RegExp('^-?' + curPrefix + '-'), '')
     if (pty !== property) {
       property = pty
       prefix = '-' + curPrefix
     }
   })
   return {prefix, property}
+}
+
+function removePrefix (engine, property) {
+  enginesPrefixes[engine.name].forEach(function (prefix) {
+    property = property.replace(new RegExp('^' + prefix), '')
+  })
+  return property
 }
 
 module.exports = { getEngine, browserSupport, engineSupport, browsersDb}
