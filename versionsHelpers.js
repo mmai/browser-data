@@ -3,13 +3,14 @@ function findLastVersion (versions, version) {
     return version
   } else {
     // Return the previous version
-    versions.push(version)
-    versions.sort(compareVersions)
-    var idx = versions.indexOf(version)
+    var vers = versions.slice(0)
+    vers.push(version)
+    vers.sort(compareVersions)
+    var idx = vers.indexOf(version)
     if (idx === 0) {
       return undefined
     }
-    return versions[idx - 1]
+    return vers[idx - 1]
   }
   return undefined
 }

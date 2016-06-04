@@ -8,17 +8,24 @@ var versionsHelpers = require('./versionsHelpers')
 var findLastVersion = versionsHelpers.findLastVersion
 var compareVersions = versionsHelpers.compareVersions
 
-var browsers = Object.keys(browsersDb)
+// Returns browsersDb content whith an array of sorted versions for each browser
+var browserNames = _.keys(browsersDb)
+var browsers = browserNames.reduce(function (acc, name) {
+  var versions = _.keys(browsersDb[name])
+  versions.sort(compareVersions)
+  acc[name] = _.assign({versions}, browsersDb[name])
+  return acc
+}, {})
 
 /* API */
 
 // Uses engineSupportDb
 var getEngine = function getEngine (browser) {
-  if (browsers.indexOf(browser.name) === -1) {
+  if (browserNames.indexOf(browser.name) === -1) {
     return undefined
   }
-  var browserData = browsersDb[browser.name]
-  var browserVersion = findLastVersion(Object.keys(browserData), browser.version)
+  var browserData = browsers[browser.name]
+  var browserVersion = findLastVersion(browserData.versions, browser.version)
   return browserData[browserVersion]
 }
 
@@ -123,4 +130,4 @@ function removePrefix (engine, property) {
   return property
 }
 
-module.exports = { getEngine, browserSupport, engineSupport, browsersDb}
+module.exports = { getEngine, browserSupport, engineSupport, browsers}
