@@ -45,10 +45,10 @@ var browserSupport = function browserSupport (browser, property) {
     'IEMobile': 'iem',
   }
   var browserId = browsers[browser.name]
-  if (!mdnDb.hasOwnProperty(property)) {
-    // Fallback to wikipedia database
-    return browserSupport_(browser, property)
-  } else {
+  if (
+    mdnDb.hasOwnProperty(property) &&
+    mdnDb[property].c.bs.hasOwnProperty(browserId)
+  ) {
     var supports = mdnDb[property].c.bs[browserId]
     var defaultSupports = supports.filter((s) => s.p === prefix)
     if (defaultSupports.length === 0) {
@@ -69,7 +69,8 @@ var browserSupport = function browserSupport (browser, property) {
         return compareVersions(version, browser.version) <= 0
     }
   }
-  return undefined
+  // Fallback to wikipedia database
+  return browserSupport_(browser, property)
 }
 
 // Uses engineSupportDb
