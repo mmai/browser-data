@@ -48,34 +48,37 @@ Generates db/mdnDb.json with the following structure :
 
 
 Main Object has CSS properties as key names
+
 Property object :
-'n' (name)
-'t' (tags)
-'c' (compatibilities) : object whith compatibilities name as keys
-  'bs' stands for 'Basic support'
+
+* 'n' (name)
+* 't' (tags)
+* 'c' (compatibilities) : object whith compatibilities name as keys
+**  'bs' stands for 'Basic support'
 
 Each compatibility line is an object with browser id as keys :
-    'c' : Chrome
-    'f' : Firefox
-    'e' : Internet Explorer Edge
-    'ie': Internet Explorer
-    'o' : Opera
-    's' : Safari
-    'a' : Android
-    'aw': Android Webview
-    'fo': Firefox OS
-    'fm': Firefox Mobile
-    'iem': Internet Explorer Mobile
-    'om' : Opera Mobile
-    'sm' : Safari Mobile
-    'cm' : Chrome for Android
+
+*   'c' : Chrome
+*   'f' : Firefox
+*   'e' : Internet Explorer Edge
+*   'ie': Internet Explorer
+*   'o' : Opera
+*   's' : Safari
+*   'a' : Android
+*   'aw': Android Webview
+*   'fo': Firefox OS
+*   'fm': Firefox Mobile
+*   'iem': Internet Explorer Mobile
+*   'om' : Opera Mobile
+*   'sm' : Safari Mobile
+*   'cm' : Chrome for Android
 
 Each browser object is an array of prefix / version tuples : 
-  'p' : prefix
-  'v' : version
+* 'p' : prefix
+* 'v' : version
 
 
-### Alternate source 2
+### Alternate source
 
 Support database was built from the wikipedia page https://en.wikipedia.org/w/index.php?title=Comparison_of_layout_engines_%28Cascading_Style_Sheets%29 (see `tools/wikipediaScraper.js`)
 
@@ -88,22 +91,3 @@ Browsers / engines versions matches comes from these sources :
 * Opera: http://www.opera.com/docs/history/presto/
 * Internet Explorer: https://en.wikipedia.org/wiki/Trident_%28layout_engine%29#Release_history
 
-## Todo
-
-### missing properties
-
-aquinum.fr : 
-
-* -webkit-tap-highlight-color
-* -webkit-font-smoothing
-* -webkit-user-select
-* -webkit-margin-top-collapse
-
-* consolidate mdn database 
-  * check same engine versions for a given property, -> majority ? wikipedia database ?
-* script to update new browser versions engines
-* check selectors support
-* check descriptors support
-* check grammar and rules support
-* check values and units support
-* add IE < 8.0 css support info from https://msdn.microsoft.com/en-us/library/cc351024%28VS.85%29.aspx

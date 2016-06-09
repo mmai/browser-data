@@ -104,7 +104,7 @@ var engineSupport = function engineSupport (engine, property) {
     case 'no':
       return false
     default:
-      return support <= engine.version
+      return Number.parseFloat(support) <= Number.parseFloat(engine.version)
   }
   return undefined
 }
