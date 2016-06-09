@@ -44,15 +44,13 @@ function translateProperty (property) {
   }, {})
 
   supportNames = Object.keys(property.c)
-  if (supportNames.indexOf('bs') === -1 && supportNames.length > 0) {
-    property.c.bs = computeBasicSupport(property.c)
-  }
+  property.c.bs = computeBasicSupport(property.c)
 
   return property
 }
 
 function computeBasicSupport (compat) {
-  var bs = {}
+  var bs = compat.bs || {}
   _.values(compat).map((support) => {
     Object.keys(support).map((browserName) => {
       var tsupports = translateSupports(support[browserName])

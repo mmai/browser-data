@@ -7,12 +7,18 @@ function parseKeyword (window) {
   const compatDesktop = getCompat(window.$('#compat-desktop table'), window)
   const compatMobile = getCompat(window.$('#compat-mobile table'), window)
   var compat = {}
-  Object.keys(compatDesktop).map((feature) => {
+  const features = _.uniq(_.concat(
+    Object.keys(compatDesktop),
+    Object.keys(compatMobile)
+  ))
+  features.map((feature) => {
     compat[feature] = {}
-    Object.keys(compatDesktop[feature]).map((b) => {
-      var browser = getBrowser(b)
-      compat[feature][browser] = compatDesktop[feature][b]
-    })
+    if (compatDesktop[feature]) {
+      Object.keys(compatDesktop[feature]).map((b) => {
+        var browser = getBrowser(b)
+        compat[feature][browser] = compatDesktop[feature][b]
+      })
+    }
     if (compatMobile[feature]) {
       Object.keys(compatMobile[feature]).map((b) => {
         var browser = getBrowser(b)
