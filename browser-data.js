@@ -33,7 +33,12 @@ var getEngine = function getEngine (browser) {
 var browserSupport = function browserSupport (browser, property) {
   var splited = splitPrefix(property)
   var prefix = splited.prefix
+  var mdnPrefix = (prefix !== '') ? '-' + prefix : ''
   var property = splited.property
+
+  if (prefix !== '' && !isPrefixSupported(browser, prefix)){
+    return false
+  }
 
   var browsers = {
     'Firefox': 'f',
@@ -50,23 +55,23 @@ var browserSupport = function browserSupport (browser, property) {
     mdnDb[property].c.bs.hasOwnProperty(browserId)
   ) {
     var supports = mdnDb[property].c.bs[browserId]
-    var defaultSupports = supports.filter((s) => s.p === prefix)
-    if (defaultSupports.length === 0) {
-      return undefined
-    }
-    var version = defaultSupports[0].v
-    switch (version) {
-      case 'yes':
-        return true
-      case 'no':
-        return false
-      case '-':
-      case '?':
-        return undefined
-      // case undefined:
-      //   console.log(mdnDb[property])
-      default:
-        return compareVersions(version, browser.version) <= 0
+    var defaultSupports = supports.filter((s) => s.p === mdnPrefix)
+    if (defaultSupports.length > 0) {
+      var version = defaultSupports[0].v
+      switch (version) {
+        case 'yes':
+          return true
+        case 'no':
+          return false
+        case '-':
+        case '?':
+          // return undefined
+          return browserSupport_(browser, property)
+        // case undefined:
+        //   console.log(mdnDb[property])
+        default:
+          return compareVersions(version, browser.version) <= 0
+      }
     }
   }
   // Fallback to wikipedia database
@@ -112,13 +117,14 @@ var engineSupport = function engineSupport (engine, property) {
 /* Helpers */
 
 function splitPrefix (property) {
-  var prefixes = _.uniq(_.flatten(_.values(enginesPrefixes))).map((p) => p.replace(/-/g, ''))
+  // var prefixes = _.uniq(_.flatten(_.values(enginesPrefixes))).map((p) => p.replace(/-/g, ''))
+  var prefixes = _.uniq(_.flatten(_.values(enginesPrefixes)))
   var prefix = ''
   prefixes.forEach(function (curPrefix) {
     var pty = property.replace(new RegExp('^-?' + curPrefix + '-'), '')
     if (pty !== property) {
       property = pty
-      prefix = '-' + curPrefix
+      prefix = curPrefix
     }
   })
   return {prefix, property}
@@ -129,6 +135,18 @@ function removePrefix (engine, property) {
     property = property.replace(new RegExp('^' + prefix), '')
   })
   return property
+}
+
+/**
+ * isPrefixSupported
+ *
+ * @param browser
+ * @param prefix
+ * @return {boolean}
+ */
+function isPrefixSupported(browser, prefix) {
+  var engine = getEngine(browser)
+  return (enginesPrefixes[engine.name].indexOf(prefix) !== -1)
 }
 
 module.exports = { getEngine, browserSupport, engineSupport, browsers}

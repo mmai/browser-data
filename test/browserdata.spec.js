@@ -24,6 +24,7 @@ describe('browserData', function () {
   describe('browserSupport', function () {
     it('should return false if a property is not supported', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '3'}, 'border-radius')).to.equal(false)
+      expect(bdata.browserSupport({name: 'Opera', version: '8'}, '@media')).to.equal(false)
     })
     it('should return true if a property is supported', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '3'}, 'border-color')).to.equal(true)
@@ -41,7 +42,7 @@ describe('browserData', function () {
       expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-moz-animation')).to.equal(true)
     })
     it('should not translate prefixed properties of other engines', function () {
-      expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-ms-animation')).to.equal(undefined)
+      expect(bdata.browserSupport({name: 'Firefox', version: '20'}, '-ms-animation')).to.equal(false)
     })
   })
 })
